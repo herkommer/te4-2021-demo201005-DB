@@ -23,46 +23,27 @@ namespace DemoSQL201005
         {
             InitializeComponent();
 
-            //
-            //Hämta data från DB och visa upp i listboxen
-            //Hmm....
-            //Skapa en anslutning/connection till DB
-            //Ställa en SQL fråga till DB och tabellen Customer
-            //Hmm, hur tar vi emot Data från DB??
-            //Mata in svaret till ListBoxen 
-
             button1.Text = "Add";
             button2.Text = "Save";
 
-            //Anslut till DB
             myDBConnection = new SqlConnection();
 
             myDBConnection.ConnectionString = @"Data Source=(LocalDb)\MSSQLLocalDB;Initial Catalog=Halloween;Integrated Security=True";
             myDBConnection.Open();
 
-            MessageBox.Show("Connection OK");
-
             mySQLCommand = new SqlCommand();
             mySQLCommand.Connection = myDBConnection;
             mySQLCommand.CommandText = "SELECT * FROM Customer";
-            //int i=mySQLCommand.ExecuteNonQuery();
-            //MessageBox.Show("Rows: " + i);
-
-            //Hmm, vi behöver DataAdapter och DataSet...tydligen
+        
             mySQLDataAdapter = new SqlDataAdapter("SELECT * FROM Customer", myDBConnection);
             myData = new DataSet();
             mySQLDataAdapter.Fill(myData);
 
-            MessageBox.Show("Test OK " + myData.Tables[0].Rows.Count);
-
             Display();
-
         }
 
         private void Display()
         {
-            //Yay, nu blev det ju enkelt igen, eller hur! Array och foreach!
-            
             listBox1.Items.Clear();
             foreach (DataRow item in myData.Tables[0].Rows)
             {
@@ -72,42 +53,20 @@ namespace DemoSQL201005
 
         private void button1_Click(object sender, EventArgs e)
         {
-            //Demo lägga till en ny Customer
-            //Prata med den lokala DB, dvs DataSet
-            //Skapa en ny rad och lägg till värden för fälten
-            //Obs, första fältet, ID är fortfarande automatiskt
-            //Detta är endast lokalt, hur ska vi uppdatera vår DB?
-
-            
             DataRow myRow = myData.Tables[0].NewRow();
             myRow[1] = textBox1.Text;
             myRow[2] = textBox2.Text;
             myData.Tables[0].Rows.Add(myRow);
-
-            MessageBox.Show("Antal rader; " + myData.Tables[0].Rows.Count);
-
+           
             Display();
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            //uppdatera DB
-
-            //Hur kan vi uppdatera DB?
             SqlCommandBuilder myCommandBuilder = new SqlCommandBuilder(mySQLDataAdapter);
             mySQLDataAdapter.Update(myData);
 
             MessageBox.Show("DB Updated");
-
-            //CRUD
-            //CREATE - INSERT INTO / http post
-            //READ - SELECT / http get
-            //UPDATE - UPDATE / http put
-            //DELETE - DELETE / http delete
-
-            //CommandBuilder skapar automatiskt de fyra SQL kommandona som behövs för CRUD
-            //DataSet kan ju innehålla nya rader, uppdaterade och borttagna, det är nu automatiskt
-
         }
     }
 }
